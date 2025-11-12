@@ -1,0 +1,379 @@
+<!-- Dashboard Home Content -->
+<div class="dashboard-home">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1 class="dashboard-title">Panel de Control</h1>
+      <p class="dashboard-subtitle">Resumen general del sistema de gestion de expedientes</p>
+    </div>
+    <button class="btn-refresh" (click)="refresh()" [disabled]="loading">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+      </svg>
+      Actualizar
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando datos del dashboard...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+    <p>{{ error }}</p>
+    <button class="btn-retry" (click)="refresh()">Reintentar</button>
+  </div>
+
+  <!-- Main Dashboard Content -->
+  <div *ngIf="!loading && !error" class="dashboard-content">
+
+    <!-- Statistics Cards Section -->
+    <section class="stats-section">
+      <h2 class="section-title">Estadisticas Generales</h2>
+
+      <div class="stats-grid">
+        <!-- Expedientes Card -->
+        <div class="stat-card expedientes-card">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <h3 class="stat-title">Expedientes</h3>
+          </div>
+          <div class="stat-value">{{ stats.expedientes.total }}</div>
+          <div class="stat-breakdown">
+            <div class="breakdown-item">
+              <span class="breakdown-label">Electronicos:</span>
+              <span class="breakdown-value">{{ stats.expedientes.electronic }}</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Fisicos:</span>
+              <span class="breakdown-value">{{ stats.expedientes.physical }}</span>
+            </div>
+          </div>
+          <div class="stat-progress">
+            <div class="progress-bar">
+              <div class="progress-fill electronic" [style.width.%]="stats.expedientes.electronicPercentage"></div>
+            </div>
+            <div class="progress-labels">
+              <span class="label-electronic">{{ stats.expedientes.electronicPercentage }}% Digital</span>
+              <span class="label-physical">{{ stats.expedientes.physicalPercentage }}% Fisico</span>
+            </div>
+          </div>
+          <button class="stat-action" (click)="navigateToExpedientes()">Ver todos</button>
+        </div>
+
+        <!-- Amparos Card -->
+        <div class="stat-card amparos-card">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <h3 class="stat-title">Amparos</h3>
+          </div>
+          <div class="stat-value">{{ stats.amparos.total }}</div>
+          <div class="stat-breakdown">
+            <div class="breakdown-item">
+              <span class="breakdown-label">Electronicos:</span>
+              <span class="breakdown-value">{{ stats.amparos.electronic }}</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Fisicos:</span>
+              <span class="breakdown-value">{{ stats.amparos.physical }}</span>
+            </div>
+          </div>
+          <div class="stat-progress">
+            <div class="progress-bar">
+              <div class="progress-fill electronic" [style.width.%]="stats.amparos.electronicPercentage"></div>
+            </div>
+            <div class="progress-labels">
+              <span class="label-electronic">{{ stats.amparos.electronicPercentage }}% Digital</span>
+              <span class="label-physical">{{ stats.amparos.physicalPercentage }}% Fisico</span>
+            </div>
+          </div>
+          <button class="stat-action" (click)="navigateToAmparos()">Ver todos</button>
+        </div>
+
+        <!-- Notificaciones Card -->
+        <div class="stat-card notificaciones-card">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+            </div>
+            <h3 class="stat-title">Notificaciones</h3>
+          </div>
+          <div class="stat-value">{{ stats.notificaciones.thisMonth }}</div>
+          <div class="stat-breakdown">
+            <div class="breakdown-item">
+              <span class="breakdown-label">Este mes:</span>
+              <span class="breakdown-value">{{ stats.notificaciones.thisMonth }}</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Ultimos 30 dias:</span>
+              <span class="breakdown-value">{{ stats.notificaciones.last30Days }}</span>
+            </div>
+          </div>
+          <button class="stat-action" (click)="navigateToNotificaciones()">Ver todas</button>
+        </div>
+
+        <!-- Promociones Card -->
+        <div class="stat-card promociones-card">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="8.5" cy="7" r="4"></circle>
+                <line x1="20" y1="8" x2="20" y2="14"></line>
+                <line x1="23" y1="11" x2="17" y2="11"></line>
+              </svg>
+            </div>
+            <h3 class="stat-title">Promociones</h3>
+          </div>
+          <div class="stat-value">{{ stats.promociones.thisMonth }}</div>
+          <div class="stat-breakdown">
+            <div class="breakdown-item">
+              <span class="breakdown-label">Este mes:</span>
+              <span class="breakdown-value">{{ stats.promociones.thisMonth }}</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Ultimos 30 dias:</span>
+              <span class="breakdown-value">{{ stats.promociones.last30Days }}</span>
+            </div>
+          </div>
+          <button class="stat-action" (click)="navigateToPromociones()">Ver todas</button>
+        </div>
+
+        <!-- Documentos Card -->
+        <div class="stat-card documentos-card">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <path d="M9 15h6"></path>
+                <path d="M12 18v-6"></path>
+              </svg>
+            </div>
+            <h3 class="stat-title">Documentos</h3>
+          </div>
+          <div class="stat-value">{{ stats.documentos.total }}</div>
+          <div class="stat-breakdown">
+            <div class="breakdown-item">
+              <span class="breakdown-label">Firmados:</span>
+              <span class="breakdown-value">{{ stats.documentos.signed }}</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Sin firmar:</span>
+              <span class="breakdown-value">{{ stats.documentos.unsigned }}</span>
+            </div>
+          </div>
+          <div class="stat-progress">
+            <div class="progress-bar">
+              <div class="progress-fill signed" [style.width.%]="stats.documentos.signedPercentage"></div>
+            </div>
+            <div class="progress-labels">
+              <span class="label-signed">{{ stats.documentos.signedPercentage }}% Firmados</span>
+              <span class="label-unsigned">{{ stats.documentos.unsignedPercentage }}% Sin firmar</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Partes Expediente Card -->
+        <div class="stat-card partes-card">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <h3 class="stat-title">Partes</h3>
+          </div>
+          <div class="stat-value">{{ stats.partes.total }}</div>
+          <div class="stat-description">
+            <p>Total de partes registradas en expedientes</p>
+          </div>
+          <button class="stat-action" (click)="navigateToPartes()">Ver todas</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Actions Section -->
+    <section class="quick-actions-section">
+      <h2 class="section-title">Acciones Rapidas</h2>
+      <div class="quick-actions-grid">
+        <button class="action-card action-notificacion" (click)="navigateToCreateNotificacion()">
+          <div class="action-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </div>
+          <h3>Nueva Notificacion</h3>
+          <p>Crear una nueva notificacion judicial</p>
+        </button>
+
+        <button class="action-card action-amparo" (click)="navigateToCreateAmparo()">
+          <div class="action-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <h3>Nuevo Amparo</h3>
+          <p>Registrar un nuevo amparo</p>
+        </button>
+
+        <button class="action-card action-promocion" (click)="navigateToCreatePromocion()">
+          <div class="action-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+          </div>
+          <h3>Nueva Promocion</h3>
+          <p>Crear una nueva promocion</p>
+        </button>
+
+        <button class="action-card action-expediente" (click)="navigateToExpedientes()">
+          <div class="action-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+          </div>
+          <h3>Ver Expedientes</h3>
+          <p>Consultar todos los expedientes</p>
+        </button>
+      </div>
+    </section>
+
+    <!-- Recent Activity Section -->
+    <section class="recent-activity-section">
+      <h2 class="section-title">Actividad Reciente</h2>
+
+      <div class="activity-grid">
+        <!-- Recent Notificaciones -->
+        <div class="activity-card">
+          <div class="activity-header">
+            <h3>Notificaciones Recientes</h3>
+            <span class="activity-count">{{ recentNotificaciones.length }}</span>
+          </div>
+          <div class="activity-list">
+            <div *ngIf="recentNotificaciones.length === 0" class="empty-state">
+              <p>No hay notificaciones recientes</p>
+            </div>
+            <div *ngFor="let notificacion of recentNotificaciones"
+                 class="activity-item"
+                 (click)="viewNotificacion(notificacion.idNotificacion)">
+              <div class="activity-icon notificacion-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+              </div>
+              <div class="activity-details">
+                <p class="activity-title">Notificacion #{{ notificacion.idNotificacion }}</p>
+                <p class="activity-meta">{{ formatDate(notificacion.fechaEnvio) }}</p>
+              </div>
+              <div class="activity-arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button class="view-all-btn" (click)="navigateToNotificaciones()">Ver todas</button>
+        </div>
+
+        <!-- Recent Promociones -->
+        <div class="activity-card">
+          <div class="activity-header">
+            <h3>Promociones Recientes</h3>
+            <span class="activity-count">{{ recentPromociones.length }}</span>
+          </div>
+          <div class="activity-list">
+            <div *ngIf="recentPromociones.length === 0" class="empty-state">
+              <p>No hay promociones recientes</p>
+            </div>
+            <div *ngFor="let promocion of recentPromociones"
+                 class="activity-item"
+                 (click)="viewPromocion(promocion.idPromocion)">
+              <div class="activity-icon promocion-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="8.5" cy="7" r="4"></circle>
+                  <line x1="20" y1="8" x2="20" y2="14"></line>
+                  <line x1="23" y1="11" x2="17" y2="11"></line>
+                </svg>
+              </div>
+              <div class="activity-details">
+                <p class="activity-title">Promocion #{{ promocion.idPromocion }}</p>
+                <p class="activity-meta">{{ formatDate(promocion.fechaEnvio) }}</p>
+              </div>
+              <div class="activity-arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button class="view-all-btn" (click)="navigateToPromociones()">Ver todas</button>
+        </div>
+
+        <!-- Recent Amparos -->
+        <div class="activity-card">
+          <div class="activity-header">
+            <h3>Amparos Recientes</h3>
+            <span class="activity-count">{{ recentAmparos.length }}</span>
+          </div>
+          <div class="activity-list">
+            <div *ngIf="recentAmparos.length === 0" class="empty-state">
+              <p>No hay amparos recientes</p>
+            </div>
+            <div *ngFor="let amparo of recentAmparos"
+                 class="activity-item"
+                 (click)="viewAmparo(amparo.idAmparosPJ)">
+              <div class="activity-icon amparo-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <div class="activity-details">
+                <p class="activity-title">{{ amparo.numeroExpedienteDJ }}</p>
+                <p class="activity-meta">{{ amparo.JUZGADO }}</p>
+              </div>
+              <div class="activity-arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button class="view-all-btn" (click)="navigateToAmparos()">Ver todos</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

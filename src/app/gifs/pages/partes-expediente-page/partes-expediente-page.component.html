@@ -1,0 +1,196 @@
+<!-- Modern Partes Expediente List Page -->
+<div class="modern-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Partes del Expediente</h1>
+    <div class="page-actions">
+      <button
+        type="button"
+        class="btn-modern btn-primary-modern"
+        (click)="onCreate()">
+        <svg class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Crear Parte
+      </button>
+    </div>
+  </div>
+
+  <!-- Partes Table Card -->
+  <div class="modern-card">
+    <div class="card-header-modern">
+      <h3 class="card-title-modern">Listado de Partes</h3>
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <div class="search-box-modern">
+          <svg class="search-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input
+            type="text"
+            class="search-input-modern"
+            placeholder="Buscar partes..."
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+        </div>
+        <div class="items-per-page">
+          <label>Mostrar:</label>
+          <select
+            class="form-control-modern form-control-sm"
+            [(ngModel)]="itemsPerPage"
+            (change)="changeItemsPerPage(itemsPerPage)"
+          >
+            <option [value]="5">5</option>
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body-modern">
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center" style="padding: 40px 0;">
+        <div class="loading-spinner" style="margin: 0 auto 16px;"></div>
+        <p class="text-muted">Cargando partes...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loading && filteredPartes.length === 0" class="text-center" style="padding: 40px 0;">
+        <svg style="width: 64px; height: 64px; margin: 0 auto 16px; color: #d1d5db;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <p class="text-muted">No hay partes registradas</p>
+      </div>
+
+      <!-- Partes Table -->
+      <div *ngIf="!loading && filteredPartes.length > 0" class="modern-table-wrapper">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre Completo</th>
+              <th>Carácter</th>
+              <th>Tipo Persona</th>
+              <th>Persona Jurídica</th>
+              <th>ID Expediente</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let parte of paginatedPartes">
+              <td>{{ parte.idParte }}</td>
+              <td>{{ parte.nombreCompleto }}</td>
+              <td>{{ parte.caracter }}</td>
+              <td>{{ parte.tipoPersona }}</td>
+              <td>{{ parte.personaJuridica }}</td>
+              <td>{{ parte.idExpediente }}</td>
+              <td>
+                <div style="display: flex; gap: 8px;">
+                  <!-- Edit Button -->
+                  <button
+                    type="button"
+                    class="btn-modern btn-sm-modern btn-primary-modern"
+                    (click)="onEdit(parte.idParte)"
+                    title="Editar parte">
+                    <svg class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Editar
+                  </button>
+
+                  <!-- Delete Button -->
+                  <button
+                    type="button"
+                    class="btn-modern btn-sm-modern btn-danger-modern"
+                    (click)="onDelete(parte.idParte)"
+                    title="Eliminar parte">
+                    <svg class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="!loading && totalPages > 1" class="pagination-container">
+        <div class="pagination-info">
+          Página {{ currentPage }} de {{ totalPages }} ({{ totalItems }} partes)
+        </div>
+        <div class="pagination-buttons">
+          <button
+            type="button"
+            class="btn-pagination"
+            (click)="changePage(1)"
+            [disabled]="currentPage === 1"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="11 17 6 12 11 7"></polyline>
+              <polyline points="18 17 13 12 18 7"></polyline>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="btn-pagination"
+            (click)="changePage(currentPage - 1)"
+            [disabled]="currentPage === 1"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <div class="page-numbers">
+            <button
+              *ngFor="let page of pageNumbers"
+              type="button"
+              class="btn-page-number"
+              [class.active]="page === currentPage"
+              (click)="changePage(page)"
+            >
+              {{ page }}
+            </button>
+          </div>
+
+          <button
+            type="button"
+            class="btn-pagination"
+            (click)="changePage(currentPage + 1)"
+            [disabled]="currentPage === totalPages"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="btn-pagination"
+            (click)="changePage(totalPages)"
+            [disabled]="currentPage === totalPages"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="13 17 18 12 13 7"></polyline>
+              <polyline points="6 17 11 12 6 7"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,221 @@
+<!-- Modern Partes Expediente Form Page -->
+<div class="modern-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">{{ isEditMode ? 'Editar Parte' : 'Crear Parte' }}</h1>
+  </div>
+
+  <!-- Form Card -->
+  <div class="modern-card">
+    <div class="card-body-modern">
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center" style="padding: 40px 0;">
+        <div class="loading-spinner" style="margin: 0 auto 16px;"></div>
+        <p class="text-muted">Cargando parte...</p>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="partesForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+        <div class="form-grid">
+
+          <!-- Nombre Completo -->
+          <div class="form-group full-width">
+            <label class="form-label" for="nombreCompleto">
+              Nombre Completo <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="nombreCompleto"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('nombreCompleto')"
+              formControlName="nombreCompleto"
+              placeholder="Ingrese el nombre completo">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('nombreCompleto')">
+              {{ getErrorMessage('nombreCompleto') }}
+            </div>
+          </div>
+
+          <!-- Nombre -->
+          <div class="form-group">
+            <label class="form-label" for="nombre">
+              Nombre <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="nombre"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('nombre')"
+              formControlName="nombre"
+              placeholder="Ingrese el nombre">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('nombre')">
+              {{ getErrorMessage('nombre') }}
+            </div>
+          </div>
+
+          <!-- Apellido Paterno -->
+          <div class="form-group">
+            <label class="form-label" for="apPaterno">
+              Apellido Paterno <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="apPaterno"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('apPaterno')"
+              formControlName="apPaterno"
+              placeholder="Ingrese el apellido paterno">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('apPaterno')">
+              {{ getErrorMessage('apPaterno') }}
+            </div>
+          </div>
+
+          <!-- Apellido Materno -->
+          <div class="form-group">
+            <label class="form-label" for="apMaterno">
+              Apellido Materno
+            </label>
+            <input
+              type="text"
+              id="apMaterno"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('apMaterno')"
+              formControlName="apMaterno"
+              placeholder="Ingrese el apellido materno">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('apMaterno')">
+              {{ getErrorMessage('apMaterno') }}
+            </div>
+          </div>
+
+          <!-- Carácter -->
+          <div class="form-group">
+            <label class="form-label" for="caracter">
+              Carácter <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="caracter"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('caracter')"
+              formControlName="caracter"
+              placeholder="Ingrese el carácter">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('caracter')">
+              {{ getErrorMessage('caracter') }}
+            </div>
+          </div>
+
+          <!-- ID Carácter -->
+          <div class="form-group">
+            <label class="form-label" for="idCaracter">
+              ID Carácter <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="idCaracter"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('idCaracter')"
+              formControlName="idCaracter"
+              placeholder="Ingrese el ID del carácter">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('idCaracter')">
+              {{ getErrorMessage('idCaracter') }}
+            </div>
+          </div>
+
+          <!-- Tipo Persona -->
+          <div class="form-group">
+            <label class="form-label" for="tipoPersona">
+              Tipo Persona <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="tipoPersona"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('tipoPersona')"
+              formControlName="tipoPersona"
+              placeholder="Ingrese el tipo de persona">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('tipoPersona')">
+              {{ getErrorMessage('tipoPersona') }}
+            </div>
+          </div>
+
+          <!-- ID Tipo Persona -->
+          <div class="form-group">
+            <label class="form-label" for="idTipoPersona">
+              ID Tipo Persona <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="idTipoPersona"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('idTipoPersona')"
+              formControlName="idTipoPersona"
+              placeholder="Ingrese el ID del tipo de persona">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('idTipoPersona')">
+              {{ getErrorMessage('idTipoPersona') }}
+            </div>
+          </div>
+
+          <!-- Persona Jurídica -->
+          <div class="form-group">
+            <label class="form-label" for="personaJuridica">
+              Persona Jurídica
+            </label>
+            <input
+              type="text"
+              id="personaJuridica"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('personaJuridica')"
+              formControlName="personaJuridica"
+              placeholder="Ingrese la persona jurídica">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('personaJuridica')">
+              {{ getErrorMessage('personaJuridica') }}
+            </div>
+          </div>
+
+          <!-- ID Expediente -->
+          <div class="form-group">
+            <label class="form-label" for="idExpediente">
+              ID Expediente <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="idExpediente"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('idExpediente')"
+              formControlName="idExpediente"
+              placeholder="Ingrese el ID del expediente">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('idExpediente')">
+              {{ getErrorMessage('idExpediente') }}
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn-modern btn-secondary-modern"
+            (click)="onCancel()"
+            [disabled]="submitting">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn-modern btn-primary-modern"
+            [disabled]="submitting">
+            <span *ngIf="!submitting">{{ isEditMode ? 'Actualizar' : 'Guardar' }}</span>
+            <span *ngIf="submitting">
+              <div class="btn-spinner"></div>
+              Guardando...
+            </span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>

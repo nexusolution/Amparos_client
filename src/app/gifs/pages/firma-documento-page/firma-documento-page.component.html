@@ -1,0 +1,223 @@
+<!-- Modern Signature Page -->
+<div class="modern-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div>
+        <h1 class="page-title">Firma Electrónica de Documentos</h1>
+        <p class="page-subtitle">Sistema de firma interna para administradores</p>
+      </div>
+      <div class="header-actions">
+        <button
+          type="button"
+          class="btn-modern btn-secondary-modern"
+          (click)="onCancel()"
+        >
+          <svg class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Warning -->
+  <div *ngIf="!isAdmin" class="alert-danger-custom" style="margin-bottom: 24px;">
+    <svg style="width: 20px; height: 20px; color: #dc2626; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="15" y1="9" x2="9" y2="15"></line>
+      <line x1="9" y1="9" x2="15" y2="15"></line>
+    </svg>
+    <div>
+      <strong>Acceso Denegado:</strong>
+      <span> Solo los administradores pueden acceder a esta función.</span>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="text-muted" style="margin-top: 16px;">Cargando notificaciones...</p>
+  </div>
+
+  <!-- Signature Form -->
+  <form [formGroup]="firmaForm" (ngSubmit)="onSubmit()" *ngIf="!loading && isAdmin">
+
+    <!-- Selection Card -->
+    <div class="modern-card" style="margin-bottom: 24px;">
+      <div class="card-header-modern">
+        <h3 class="card-title-modern">Selección de Documento</h3>
+      </div>
+
+      <div class="card-body-modern">
+        <div class="form-grid">
+          <!-- Notificación -->
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label class="form-label">
+              Notificación <span class="required">*</span>
+            </label>
+            <select
+              class="form-control-modern"
+              formControlName="idNotificacion"
+              (change)="onNotificacionChange()"
+              [class.is-invalid]="firmaForm.get('idNotificacion')?.invalid && firmaForm.get('idNotificacion')?.touched"
+            >
+              <option value="">Seleccione una notificación</option>
+              <option *ngFor="let notif of notificaciones" [value]="notif.idNotificacion">
+                {{ getNotificacionLabel(notif) }}
+              </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="firmaForm.get('idNotificacion')?.invalid && firmaForm.get('idNotificacion')?.touched">
+              Seleccione una notificación
+            </div>
+          </div>
+
+          <!-- Documento -->
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label class="form-label">
+              Documento <span class="required">*</span>
+            </label>
+            <select
+              class="form-control-modern"
+              formControlName="idDocumento"
+              (change)="onDocumentoChange()"
+              [disabled]="documentos.length === 0"
+              [class.is-invalid]="firmaForm.get('idDocumento')?.invalid && firmaForm.get('idDocumento')?.touched"
+            >
+              <option value="">{{ documentos.length === 0 ? 'Seleccione primero una notificación' : 'Seleccione un documento' }}</option>
+              <option *ngFor="let doc of documentos" [value]="doc.idDocumentoNotificacion" [disabled]="isDocumentoFirmado(doc)">
+                {{ getDocumentoLabel(doc) }}
+              </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="firmaForm.get('idDocumento')?.invalid && firmaForm.get('idDocumento')?.touched">
+              Seleccione un documento
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected Document Info -->
+        <div *ngIf="selectedDocumento" class="info-box" style="margin-top: 24px;">
+          <div class="info-header">
+            <svg style="width: 20px; height: 20px; color: #3b82f6;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <strong>Información del Documento</strong>
+          </div>
+          <div class="info-content">
+            <div class="info-row">
+              <span class="info-label">Nombre:</span>
+              <span class="info-value">{{ selectedDocumento.nombre }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Extensión:</span>
+              <span class="info-value">{{ selectedDocumento.extension }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Tamaño:</span>
+              <span class="info-value">{{ selectedDocumento.longitud }} bytes</span>
+            </div>
+            <div class="info-row" *ngIf="selectedDocumento.firmado">
+              <span class="info-label">Estado:</span>
+              <span class="badge-success-custom">✓ Ya firmado</span>
+            </div>
+            <div class="info-row" *ngIf="selectedDocumento.fechaFirmado">
+              <span class="info-label">Fecha de Firma:</span>
+              <span class="info-value">{{ selectedDocumento.fechaFirmado | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Authentication Card -->
+    <div class="modern-card" style="margin-bottom: 24px;">
+      <div class="card-header-modern">
+        <h3 class="card-title-modern">Autenticación de Firma</h3>
+      </div>
+
+      <div class="card-body-modern">
+        <div class="form-grid">
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label">
+              Contraseña <span class="required">*</span>
+            </label>
+            <input
+              type="password"
+              class="form-control-modern"
+              formControlName="password"
+              placeholder="Ingrese su contraseña para confirmar"
+              [class.is-invalid]="firmaForm.get('password')?.invalid && firmaForm.get('password')?.touched"
+            />
+            <div class="invalid-feedback" *ngIf="firmaForm.get('password')?.invalid && firmaForm.get('password')?.touched">
+              La contraseña debe tener al menos 6 caracteres
+            </div>
+            <small class="form-text">Se requiere autenticación para firmar documentos</small>
+          </div>
+
+          <!-- Observaciones -->
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label class="form-label">Observaciones (Opcional)</label>
+            <textarea
+              class="form-control-modern"
+              formControlName="observaciones"
+              rows="3"
+              placeholder="Agregue cualquier nota o comentario sobre esta firma"
+              maxlength="500"
+            ></textarea>
+            <small class="form-text">{{ firmaForm.get('observaciones')?.value?.length || 0 }} / 500 caracteres</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Alert -->
+    <div class="alert-info-custom" style="margin-bottom: 24px;">
+      <svg style="width: 20px; height: 20px; color: #3b82f6; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      <div>
+        <strong>Sobre la Firma Electrónica:</strong>
+        <p style="margin: 4px 0 0 0;">
+          Al firmar este documento, se generará un hash criptográfico (SHA-256) del archivo original y se registrará junto con su usuario, fecha y hora.
+          Esta firma servirá como comprobante interno de que usted revisó y aprobó este documento.
+        </p>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn-modern btn-secondary-modern"
+        (click)="onCancel()"
+        [disabled]="submitting"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="btn-modern btn-success-modern"
+        [disabled]="firmaForm.invalid || submitting || selectedDocumento?.firmado"
+      >
+        <svg class="btn-icon-modern" *ngIf="!submitting" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 11l3 3L22 4"></path>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+        </svg>
+        <svg class="btn-icon-modern spin" *ngIf="submitting" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+        </svg>
+        {{ submitting ? 'Firmando...' : 'Firmar Documento' }}
+      </button>
+    </div>
+
+  </form>
+
+</div>

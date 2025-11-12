@@ -1,0 +1,508 @@
+<!-- Modern Notification Registration Page -->
+<div class="modern-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div>
+        <h1 class="page-title">
+          {{ isViewMode ? 'Ver' : isEditMode ? 'Editar' : 'Nueva' }} Notificación
+        </h1>
+        <p class="page-subtitle" *ngIf="isEditMode || isViewMode">
+          ID: {{ notificacionId }}
+        </p>
+      </div>
+      <div class="header-actions">
+        <button
+          *ngIf="isViewMode"
+          type="button"
+          class="btn-modern btn-primary-modern"
+          (click)="onEdit()"
+        >
+          <svg class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          Editar
+        </button>
+        <button
+          type="button"
+          class="btn-modern btn-secondary-modern"
+          (click)="onCancel()"
+        >
+          <svg class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          {{ isViewMode ? 'Volver' : 'Cancelar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="text-muted" style="margin-top: 16px;">Cargando notificación...</p>
+  </div>
+
+  <!-- Form Content -->
+  <form [formGroup]="notificacionForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+
+    <!-- Notification Details Card -->
+    <div class="modern-card" style="margin-bottom: 24px;">
+      <div class="card-header-modern">
+        <h3 class="card-title-modern">Información de la Notificación</h3>
+      </div>
+
+      <div class="card-body-modern">
+        <div class="form-grid">
+          <!-- Fecha de Envío -->
+          <div class="form-group">
+            <label class="form-label">
+              Fecha de Envío <span class="required">*</span>
+            </label>
+            <input
+              type="date"
+              class="form-control-modern"
+              formControlName="fechaEnvio"
+              [class.is-invalid]="isFieldInvalid('fechaEnvio')"
+            />
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('fechaEnvio')">
+              {{ getFieldError('fechaEnvio') }}
+            </div>
+          </div>
+
+          <!-- Organo Impartidor de Justicia -->
+          <div class="form-group">
+            <label class="form-label">
+              Órgano Impartidor de Justicia <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              class="form-control-modern"
+              formControlName="organoImpartidorJusticia"
+              placeholder="ID del órgano"
+              [class.is-invalid]="isFieldInvalid('organoImpartidorJusticia')"
+            />
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('organoImpartidorJusticia')">
+              {{ getFieldError('organoImpartidorJusticia') }}
+            </div>
+          </div>
+
+          <!-- Tipo Medio Notificación -->
+          <div class="form-group">
+            <label class="form-label">
+              Tipo de Medio de Notificación <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control-modern"
+              formControlName="tipoMedioNotificacion"
+              placeholder="Ej: Electrónica, Física"
+              [class.is-invalid]="isFieldInvalid('tipoMedioNotificacion')"
+            />
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('tipoMedioNotificacion')">
+              {{ getFieldError('tipoMedioNotificacion') }}
+            </div>
+          </div>
+
+          <!-- Expediente -->
+          <div class="form-group">
+            <label class="form-label">
+              Expediente <span class="required">*</span>
+            </label>
+            <select
+              class="form-control-modern"
+              formControlName="idExpediente"
+              [class.is-invalid]="isFieldInvalid('idExpediente')"
+            >
+              <option value="">Seleccione un expediente</option>
+              <option *ngFor="let exp of expedientes" [value]="exp.idExpediente">
+                {{ getExpedienteLabel(exp) }}
+              </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('idExpediente')">
+              {{ getFieldError('idExpediente') }}
+            </div>
+          </div>
+
+          <!-- Tipo Asunto -->
+          <div class="form-group">
+            <label class="form-label">
+              Tipo de Asunto <span class="required">*</span>
+            </label>
+            <select
+              class="form-control-modern"
+              formControlName="idTipoAsunto"
+              [class.is-invalid]="isFieldInvalid('idTipoAsunto')"
+            >
+              <option value="">Seleccione un tipo de asunto</option>
+              <option *ngFor="let tipo of tiposAsunto" [value]="tipo.idTipoAsunto">
+                {{ tipo.descripcion }}
+              </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('idTipoAsunto')">
+              {{ getFieldError('idTipoAsunto') }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Amparo Information Card -->
+    <div class="modern-card" style="margin-bottom: 24px;">
+      <div class="card-header-modern">
+        <h3 class="card-title-modern">Información del Amparo (Opcional)</h3>
+      </div>
+
+      <div class="card-body-modern">
+        <div class="form-grid">
+          <!-- Número Expediente DJ -->
+          <div class="form-group">
+            <label class="form-label">Número de Expediente DJ</label>
+            <input
+              type="text"
+              class="form-control-modern"
+              formControlName="numeroExpedienteDJ"
+              placeholder="Número de expediente"
+            />
+          </div>
+
+          <!-- Juzgado -->
+          <div class="form-group">
+            <label class="form-label">Juzgado</label>
+            <input
+              type="text"
+              class="form-control-modern"
+              formControlName="juzgado"
+              placeholder="Nombre del juzgado"
+            />
+          </div>
+
+          <!-- Expediente Electrónico -->
+          <div class="form-group">
+            <label class="form-label">Expediente Electrónico</label>
+            <div class="form-check-modern">
+              <input
+                type="checkbox"
+                class="form-check-input-modern"
+                formControlName="expedienteElectronico"
+                id="expedienteElectronico"
+              />
+              <label class="form-check-label-modern" for="expedienteElectronico">
+                Es expediente electrónico
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Partes Expediente Card -->
+    <div class="modern-card" style="margin-bottom: 24px;">
+      <div class="card-header-modern">
+        <h3 class="card-title-modern">Partes del Expediente</h3>
+        <button
+          *ngIf="!isViewMode"
+          type="button"
+          class="btn-modern btn-success-modern btn-sm"
+          (click)="togglePartesForm()"
+        >
+          <svg class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          {{ showPartesForm ? 'Cancelar' : 'Agregar Parte' }}
+        </button>
+      </div>
+
+      <!-- Warning for missing partes -->
+      <div *ngIf="partes.length === 0" style="padding: 16px 24px; background-color: #fff3cd; border-bottom: 1px solid #ffc107; display: flex; align-items: center; gap: 12px;">
+        <svg style="width: 20px; height: 20px; color: #856404; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <div>
+          <strong style="color: #856404;">Advertencia:</strong>
+          <span style="color: #856404;"> No se han agregado partes al expediente. Se recomienda agregar al menos una parte.</span>
+        </div>
+      </div>
+
+      <div class="card-body-modern">
+        <!-- Add Parte Form -->
+        <div *ngIf="showPartesForm && !isViewMode" class="add-form-section">
+          <form [formGroup]="parteForm" class="form-grid">
+            <div class="form-group">
+              <label class="form-label">
+                Nombre Completo <span class="required">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control-modern"
+                formControlName="nombreCompleto"
+                placeholder="Nombre completo"
+                [class.is-invalid]="isFieldInvalid('nombreCompleto', parteForm)"
+              />
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('nombreCompleto', parteForm)">
+                {{ getFieldError('nombreCompleto', parteForm) }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Carácter <span class="required">*</span>
+              </label>
+              <select
+                class="form-control-modern"
+                formControlName="caracter"
+                [class.is-invalid]="isFieldInvalid('caracter', parteForm)"
+              >
+                <option value="">Seleccione</option>
+                <option value="Quejoso">Quejoso</option>
+                <option value="Autoridad Responsable">Autoridad Responsable</option>
+                <option value="Tercero Interesado">Tercero Interesado</option>
+                <option value="Tercero Perjudicado">Tercero Perjudicado</option>
+              </select>
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('caracter', parteForm)">
+                {{ getFieldError('caracter', parteForm) }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Tipo de Persona <span class="required">*</span>
+              </label>
+              <select
+                class="form-control-modern"
+                formControlName="tipoPersona"
+                [class.is-invalid]="isFieldInvalid('tipoPersona', parteForm)"
+              >
+                <option value="">Seleccione</option>
+                <option value="Física">Física</option>
+                <option value="Moral">Moral</option>
+              </select>
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('tipoPersona', parteForm)">
+                {{ getFieldError('tipoPersona', parteForm) }}
+              </div>
+            </div>
+
+            <div class="form-group" style="align-self: flex-end;">
+              <button
+                type="button"
+                class="btn-modern btn-success-modern"
+                (click)="addParte()"
+                style="width: 100%;"
+              >
+                <svg class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Agregar Parte
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Partes List -->
+        <div *ngIf="partes.length === 0 && !showPartesForm" class="empty-list">
+          <p class="text-muted">No hay partes agregadas</p>
+        </div>
+
+        <div *ngIf="partes.length > 0" class="table-responsive">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>Nombre Completo</th>
+                <th>Carácter</th>
+                <th>Tipo de Persona</th>
+                <th *ngIf="!isViewMode" class="actions-column">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let parte of partes; let i = index">
+                <td>{{ parte.nombreCompleto }}</td>
+                <td>{{ parte.caracter }}</td>
+                <td>{{ parte.tipoPersona }}</td>
+                <td *ngIf="!isViewMode" class="actions-column">
+                  <button
+                    type="button"
+                    class="btn-action btn-delete"
+                    (click)="removeParte(i)"
+                    title="Eliminar"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documentos Card -->
+    <div class="modern-card" style="margin-bottom: 24px;">
+      <div class="card-header-modern">
+        <h3 class="card-title-modern">Documentos de la Notificación</h3>
+        <button
+          *ngIf="!isViewMode"
+          type="button"
+          class="btn-modern btn-success-modern btn-sm"
+          (click)="toggleDocumentForm()"
+        >
+          <svg class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          {{ showDocumentForm ? 'Cancelar' : 'Agregar Documento' }}
+        </button>
+      </div>
+
+      <!-- Warning for missing documents -->
+      <div *ngIf="documentos.length === 0" style="padding: 16px 24px; background-color: #fff3cd; border-bottom: 1px solid #ffc107; display: flex; align-items: center; gap: 12px;">
+        <svg style="width: 20px; height: 20px; color: #856404; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <div>
+          <strong style="color: #856404;">Advertencia:</strong>
+          <span style="color: #856404;"> No se han agregado documentos a la notificación. Se recomienda adjuntar al menos un documento.</span>
+        </div>
+      </div>
+
+      <div class="card-body-modern">
+        <!-- Add Document Form -->
+        <div *ngIf="showDocumentForm && !isViewMode" class="add-form-section">
+          <form [formGroup]="documentForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">
+                  Nombre del Documento <span class="required">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-control-modern"
+                  formControlName="nombre"
+                  placeholder="Nombre descriptivo"
+                  [class.is-invalid]="isFieldInvalid('nombre', documentForm)"
+                />
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('nombre', documentForm)">
+                  {{ getFieldError('nombre', documentForm) }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Clasificación <span class="required">*</span>
+                </label>
+                <select
+                  class="form-control-modern"
+                  formControlName="idClasificacionArchivo"
+                  [class.is-invalid]="isFieldInvalid('idClasificacionArchivo', documentForm)"
+                >
+                  <option value="">Seleccione</option>
+                  <option *ngFor="let clas of clasificacionesArchivo" [value]="clas.idClasificacionArchivo">
+                    {{ clas.descripcion }}
+                  </option>
+                </select>
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('idClasificacionArchivo', documentForm)">
+                  {{ getFieldError('idClasificacionArchivo', documentForm) }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Documento Firmado</label>
+                <div class="form-check-modern">
+                  <input
+                    type="checkbox"
+                    class="form-check-input-modern"
+                    formControlName="firmado"
+                    id="firmado"
+                  />
+                  <label class="form-check-label-modern" for="firmado">
+                    El documento está firmado digitalmente
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Document Upload Component -->
+            <div class="form-group" style="margin-top: 16px;">
+              <label class="form-label">
+                Archivo(s) <span class="required">*</span>
+              </label>
+              <app-document-upload
+                (filesSelected)="onFilesSelected($event)"
+                [maxSize]="10485760"
+                [acceptedTypes]="['.pdf', '.doc', '.docx']"
+              ></app-document-upload>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+              <button
+                type="button"
+                class="btn-modern btn-success-modern"
+                (click)="addDocument()"
+              >
+                <svg class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Agregar Documento
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Documents List -->
+        <div *ngIf="documentos.length === 0 && !showDocumentForm" class="empty-list">
+          <p class="text-muted">No hay documentos adjuntos</p>
+        </div>
+
+        <div *ngIf="documentos.length > 0">
+          <app-document-list
+            [documents]="documentos"
+            (deleteDocument)="removeDocument($event)"
+            (downloadDocument)="downloadDocument(documentos[$event])"
+            [viewMode]="isViewMode"
+          ></app-document-list>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions-container" *ngIf="!isViewMode">
+      <div class="modern-card">
+        <div class="card-body-modern">
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn-modern btn-secondary-modern"
+              (click)="onCancel()"
+              [disabled]="submitting"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn-modern btn-primary-modern"
+              [disabled]="submitting || notificacionForm.invalid"
+            >
+              <span *ngIf="submitting" class="btn-spinner"></span>
+              <svg *ngIf="!submitting" class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              {{ isEditMode ? 'Actualizar' : 'Guardar' }} Notificación
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+</div>

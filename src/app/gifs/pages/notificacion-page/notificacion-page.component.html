@@ -1,0 +1,302 @@
+<!-- Modern Notifications Page -->
+<div class="modern-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Notificaciones</h1>
+      <button type="button" class="btn-modern btn-primary-modern" (click)="onCreate()">
+        <svg class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Nueva Notificación
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Card -->
+  <div class="modern-card" style="margin-bottom: 24px;">
+    <div class="card-body-modern">
+      <div class="filters-container">
+        <!-- Search Input -->
+        <div class="filter-group" style="flex: 2;">
+          <label class="filter-label">Buscar</label>
+          <div class="search-input-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input
+              type="text"
+              class="form-control-modern search-input"
+              placeholder="Buscar por ID, folio, amparo, asunto..."
+              [(ngModel)]="searchTerm"
+              (input)="onSearch()"
+            />
+          </div>
+        </div>
+
+        <!-- Date Filter -->
+        <div class="filter-group">
+          <label class="filter-label">Fecha de Envío</label>
+          <input
+            type="date"
+            class="form-control-modern"
+            [(ngModel)]="selectedDateFilter"
+            (change)="onFilterChange()"
+          />
+        </div>
+
+        <!-- Materia Filter -->
+        <div class="filter-group">
+          <label class="filter-label">Materia</label>
+          <select
+            class="form-control-modern"
+            [(ngModel)]="selectedMateriaFilter"
+            (change)="onFilterChange()"
+          >
+            <option value="">Todas</option>
+            <option *ngFor="let materia of materias" [value]="materia">{{ materia }}</option>
+          </select>
+        </div>
+
+        <!-- Clear Filters Button -->
+        <div class="filter-group" style="align-self: flex-end;">
+          <button
+            type="button"
+            class="btn-modern btn-secondary-modern"
+            (click)="clearFilters()"
+            [disabled]="!searchTerm && !selectedDateFilter && !selectedMateriaFilter"
+          >
+            <svg class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+            </svg>
+            Limpiar
+          </button>
+        </div>
+      </div>
+
+      <!-- Results Count -->
+      <div class="results-info">
+        <p class="results-text">
+          Mostrando <strong>{{ paginatedNotificaciones.length }}</strong> de <strong>{{ totalItems }}</strong> notificaciones
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications Table Card -->
+  <div class="modern-card">
+    <div class="card-header-modern">
+      <h3 class="card-title-modern">Bandeja de Notificaciones</h3>
+      <div class="items-per-page">
+        <label>Mostrar:</label>
+        <select
+          class="form-control-modern form-control-sm"
+          [(ngModel)]="itemsPerPage"
+          (change)="changeItemsPerPage(itemsPerPage)"
+        >
+          <option [value]="5">5</option>
+          <option [value]="10">10</option>
+          <option [value]="25">25</option>
+          <option [value]="50">50</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card-body-modern">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="text-muted" style="margin-top: 16px;">Cargando notificaciones...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loading && filteredNotificaciones.length === 0" class="empty-state">
+        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <h3 class="empty-title">No hay notificaciones</h3>
+        <p class="text-muted empty-subtitle">
+          {{ searchTerm || selectedDateFilter || selectedMateriaFilter
+            ? 'No se encontraron resultados con los filtros aplicados'
+            : 'No tienes notificaciones pendientes en este momento' }}
+        </p>
+        <button
+          *ngIf="searchTerm || selectedDateFilter || selectedMateriaFilter"
+          type="button"
+          class="btn-modern btn-primary-modern"
+          (click)="clearFilters()"
+        >
+          Limpiar Filtros
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div *ngIf="!loading && filteredNotificaciones.length > 0" class="table-responsive">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Amparo</th>
+              <th>Procedimiento</th>
+              <th>Fecha de Envío</th>
+              <th>Folio</th>
+              <th>Cuaderno</th>
+              <th>Asunto</th>
+              <th>Materia</th>
+              <th>Documentos</th>
+              <th class="actions-column">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let notificacion of paginatedNotificaciones">
+              <td>{{ notificacion.idNotificacion }}</td>
+              <td>{{ getAmparoNumber(notificacion) }}</td>
+              <td>{{ getProcedimiento(notificacion) }}</td>
+              <td>{{ formatDate(notificacion.fechaEnvio) }}</td>
+              <td>{{ getFolio(notificacion) }}</td>
+              <td>{{ getCuaderno(notificacion) }}</td>
+              <td>
+                <span class="text-truncate" style="max-width: 200px; display: inline-block;"
+                      [title]="getAsunto(notificacion)">
+                  {{ getAsunto(notificacion) }}
+                </span>
+              </td>
+              <td>{{ getMateria(notificacion) }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="btn-icon-action"
+                  [class.has-documents]="hasDocuments(notificacion)"
+                  (click)="onViewDocuments(notificacion)"
+                  [title]="hasDocuments(notificacion) ? getDocumentCount(notificacion) + ' documento(s)' : 'Sin documentos'"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  <span class="badge-count" *ngIf="hasDocuments(notificacion)">
+                    {{ getDocumentCount(notificacion) }}
+                  </span>
+                </button>
+              </td>
+              <td class="actions-column">
+                <div class="action-buttons">
+                  <!-- View Button -->
+                  <button
+                    type="button"
+                    class="btn-action btn-view"
+                    (click)="onView(notificacion)"
+                    title="Ver detalles"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+
+                  <!-- Edit Button -->
+                  <button
+                    type="button"
+                    class="btn-action btn-edit"
+                    (click)="onEdit(notificacion)"
+                    title="Editar"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                  </button>
+
+                  <!-- Delete Button -->
+                  <button
+                    type="button"
+                    class="btn-action btn-delete"
+                    (click)="onDelete(notificacion)"
+                    title="Eliminar"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="!loading && totalPages > 1" class="pagination-container">
+        <div class="pagination-info">
+          Página {{ currentPage }} de {{ totalPages }}
+        </div>
+        <div class="pagination-buttons">
+          <button
+            type="button"
+            class="btn-pagination"
+            (click)="changePage(1)"
+            [disabled]="currentPage === 1"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="11 17 6 12 11 7"></polyline>
+              <polyline points="18 17 13 12 18 7"></polyline>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="btn-pagination"
+            (click)="changePage(currentPage - 1)"
+            [disabled]="currentPage === 1"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <div class="page-numbers">
+            <button
+              *ngFor="let page of pageNumbers"
+              type="button"
+              class="btn-page-number"
+              [class.active]="page === currentPage"
+              (click)="changePage(page)"
+            >
+              {{ page }}
+            </button>
+          </div>
+
+          <button
+            type="button"
+            class="btn-pagination"
+            (click)="changePage(currentPage + 1)"
+            [disabled]="currentPage === totalPages"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="btn-pagination"
+            (click)="changePage(totalPages)"
+            [disabled]="currentPage === totalPages"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="13 17 18 12 13 7"></polyline>
+              <polyline points="6 17 11 12 6 7"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

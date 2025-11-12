@@ -1,0 +1,187 @@
+<!-- Modern Expediente Form Page -->
+<div class="modern-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">{{ isEditMode ? 'Editar Expediente' : 'Crear Expediente' }}</h1>
+  </div>
+
+  <!-- Form Card -->
+  <div class="modern-card">
+    <div class="card-body-modern">
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center" style="padding: 40px 0;">
+        <div class="loading-spinner" style="margin: 0 auto 16px;"></div>
+        <p class="text-muted">Cargando expediente...</p>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="expedienteForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+        <div class="form-grid">
+
+          <!-- Expediente CJF -->
+          <div class="form-group">
+            <label class="form-label" for="expedienteCJF">
+              Expediente CJF <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="expedienteCJF"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('expedienteCJF')"
+              formControlName="expedienteCJF"
+              placeholder="Ingrese el expediente CJF">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('expedienteCJF')">
+              {{ getErrorMessage('expedienteCJF') }}
+            </div>
+          </div>
+
+          <!-- Tipo Documento -->
+          <div class="form-group">
+            <label class="form-label" for="tipoDocumento">
+              Tipo Documento <span class="required">*</span>
+            </label>
+            <select
+              id="tipoDocumento"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('tipoDocumento')"
+              formControlName="tipoDocumento">
+              <option value="">Seleccione tipo documento</option>
+              <option value="1">Tipo 1</option>
+              <option value="2">Tipo 2</option>
+              <option value="3">Tipo 3</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('tipoDocumento')">
+              {{ getErrorMessage('tipoDocumento') }}
+            </div>
+          </div>
+
+          <!-- Tipo Sub Nivel -->
+          <div class="form-group">
+            <label class="form-label" for="tipoSubNivel">
+              Tipo Sub Nivel <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="tipoSubNivel"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('tipoSubNivel')"
+              formControlName="tipoSubNivel"
+              placeholder="Ingrese el tipo sub nivel">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('tipoSubNivel')">
+              {{ getErrorMessage('tipoSubNivel') }}
+            </div>
+          </div>
+
+          <!-- Tipo Materia -->
+          <div class="form-group">
+            <label class="form-label" for="tipoMateria">
+              Tipo Materia <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="tipoMateria"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('tipoMateria')"
+              formControlName="tipoMateria"
+              placeholder="Ingrese el tipo materia">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('tipoMateria')">
+              {{ getErrorMessage('tipoMateria') }}
+            </div>
+          </div>
+
+          <!-- ID Organo Origen -->
+          <div class="form-group">
+            <label class="form-label" for="idOrganoOrigen">
+              ID Órgano Origen <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="idOrganoOrigen"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('idOrganoOrigen')"
+              formControlName="idOrganoOrigen"
+              placeholder="Ingrese el ID del órgano origen">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('idOrganoOrigen')">
+              {{ getErrorMessage('idOrganoOrigen') }}
+            </div>
+          </div>
+
+          <!-- Origen -->
+          <div class="form-group">
+            <label class="form-label" for="origen">
+              Origen <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="origen"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('origen')"
+              formControlName="origen"
+              placeholder="Ingrese el origen">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('origen')">
+              {{ getErrorMessage('origen') }}
+            </div>
+          </div>
+
+          <!-- UHEE -->
+          <div class="form-group">
+            <label class="form-label" for="UHEE">
+              UHEE
+            </label>
+            <input
+              type="text"
+              id="UHEE"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('UHEE')"
+              formControlName="UHEE"
+              placeholder="Ingrese UHEE">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('UHEE')">
+              {{ getErrorMessage('UHEE') }}
+            </div>
+          </div>
+
+          <!-- Expediente Electronico -->
+          <div class="form-group">
+            <div class="form-check-modern">
+              <input
+                type="checkbox"
+                id="expedienteElectronico"
+                class="form-check-input-modern"
+                formControlName="expedienteElectronico">
+              <label class="form-check-label-modern" for="expedienteElectronico">
+                Expediente Electrónico
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn-modern btn-secondary-modern"
+            (click)="onCancel()"
+            [disabled]="submitting">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn-modern btn-primary-modern"
+            [disabled]="submitting">
+            <span *ngIf="!submitting">{{ isEditMode ? 'Actualizar' : 'Guardar' }}</span>
+            <span *ngIf="submitting">
+              <div class="btn-spinner"></div>
+              Guardando...
+            </span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>

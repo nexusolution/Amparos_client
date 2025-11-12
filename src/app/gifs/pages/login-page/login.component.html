@@ -1,0 +1,178 @@
+<!-- Modern Login Container -->
+<div class="login-wrapper">
+
+  <!-- Background decorative elements -->
+  <div class="bg-decoration">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+  </div>
+
+  <!-- Login Card -->
+  <div class="login-container">
+
+    <!-- Left side - Branding -->
+    <div class="login-brand">
+      <div class="brand-content">
+        <div class="logo-container">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z"
+                  fill="currentColor" opacity="0.9"/>
+            <path d="M12 7L7 9.5V12.5C7 14.71 9.13 16.67 12 17.5C14.87 16.67 17 14.71 17 12.5V9.5L12 7Z"
+                  fill="white"/>
+          </svg>
+        </div>
+        <h1 class="brand-title">Sistema Amparos</h1>
+        <p class="brand-subtitle">Órgano de Impartición de Justicia</p>
+        <div class="brand-divider"></div>
+        <p class="brand-description">
+          Plataforma integral para la gestión y administración de procesos judiciales de amparo
+        </p>
+      </div>
+    </div>
+
+    <!-- Right side - Login Form -->
+    <div class="login-form-section">
+      <div class="form-container">
+
+        <!-- Header -->
+        <div class="form-header">
+          <h2 class="form-title">Bienvenido</h2>
+          <p class="form-subtitle">Ingresa tus credenciales para acceder al sistema</p>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="alert-modern alert-error">
+          <div class="alert-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+          <div class="alert-content">
+            <p class="alert-title">Error de autenticación</p>
+            <p class="alert-message">{{ errorMessage }}</p>
+          </div>
+          <button type="button" class="alert-close" (click)="errorMessage = ''">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Login Form -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="modern-form">
+
+          <!-- Username Field -->
+          <div class="form-group-modern">
+            <label for="usuario" class="form-label-modern">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              Usuario
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                formControlName="usuario"
+                id="usuario"
+                class="form-input-modern"
+                placeholder="usuario@ejemplo.com"
+                [class.input-error]="isFieldInvalid('usuario')"
+                [class.input-success]="loginForm.get('usuario')?.valid && loginForm.get('usuario')?.touched"
+              />
+              <div *ngIf="loginForm.get('usuario')?.valid && loginForm.get('usuario')?.touched" class="input-icon input-icon-success">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+            </div>
+            <span *ngIf="isFieldInvalid('usuario')" class="error-message">
+              <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              {{ getFieldError('usuario') }}
+            </span>
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-group-modern">
+            <label for="password" class="form-label-modern">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              Contraseña
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="password"
+                formControlName="password"
+                id="password"
+                class="form-input-modern"
+                placeholder="••••••••"
+                [class.input-error]="isFieldInvalid('password')"
+                [class.input-success]="loginForm.get('password')?.valid && loginForm.get('password')?.touched"
+              />
+              <div *ngIf="loginForm.get('password')?.valid && loginForm.get('password')?.touched" class="input-icon input-icon-success">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+            </div>
+            <span *ngIf="isFieldInvalid('password')" class="error-message">
+              <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              {{ getFieldError('password') }}
+            </span>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="btn-modern btn-primary-modern"
+            [disabled]="isLoading"
+            [class.btn-loading]="isLoading"
+          >
+            <span *ngIf="!isLoading" class="btn-content">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                <polyline points="10 17 15 12 10 7"></polyline>
+                <line x1="15" y1="12" x2="3" y2="12"></line>
+              </svg>
+              Iniciar Sesión
+            </span>
+            <span *ngIf="isLoading" class="btn-content">
+              <span class="spinner-modern"></span>
+              Iniciando sesión...
+            </span>
+          </button>
+
+        </form>
+
+        <!-- Footer -->
+        <div class="form-footer">
+          <p class="footer-text">
+            <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            ¿Problemas para acceder? Contacta al administrador del sistema
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

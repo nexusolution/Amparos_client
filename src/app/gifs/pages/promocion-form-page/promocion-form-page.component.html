@@ -1,0 +1,101 @@
+<!-- Modern Promocion Form Page -->
+<div class="modern-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">{{ isEditMode ? 'Editar Promoción' : 'Crear Promoción' }}</h1>
+  </div>
+
+  <!-- Form Card -->
+  <div class="modern-card">
+    <div class="card-body-modern">
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center" style="padding: 40px 0;">
+        <div class="loading-spinner" style="margin: 0 auto 16px;"></div>
+        <p class="text-muted">Cargando promoción...</p>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="promocionForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+        <div class="form-grid">
+
+          <!-- Fecha Envío -->
+          <div class="form-group">
+            <label class="form-label" for="fechaEnvio">
+              Fecha Envío <span class="required">*</span>
+            </label>
+            <input
+              type="date"
+              id="fechaEnvio"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('fechaEnvio')"
+              formControlName="fechaEnvio">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('fechaEnvio')">
+              {{ getErrorMessage('fechaEnvio') }}
+            </div>
+          </div>
+
+          <!-- ID Amparo PJ -->
+          <div class="form-group">
+            <label class="form-label" for="idAmparosPJ">
+              ID Amparo PJ <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="idAmparosPJ"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('idAmparosPJ')"
+              formControlName="idAmparosPJ"
+              placeholder="Ingrese el ID del amparo PJ">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('idAmparosPJ')">
+              {{ getErrorMessage('idAmparosPJ') }}
+            </div>
+          </div>
+
+          <!-- Tipo Cuaderno -->
+          <div class="form-group">
+            <label class="form-label" for="tipoCuaderno">
+              Tipo Cuaderno <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="tipoCuaderno"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('tipoCuaderno')"
+              formControlName="tipoCuaderno"
+              placeholder="Ingrese el tipo de cuaderno">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('tipoCuaderno')">
+              {{ getErrorMessage('tipoCuaderno') }}
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn-modern btn-secondary-modern"
+            (click)="onCancel()"
+            [disabled]="submitting">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn-modern btn-primary-modern"
+            [disabled]="submitting">
+            <span *ngIf="!submitting">{{ isEditMode ? 'Actualizar' : 'Guardar' }}</span>
+            <span *ngIf="submitting">
+              <div class="btn-spinner"></div>
+              Guardando...
+            </span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>

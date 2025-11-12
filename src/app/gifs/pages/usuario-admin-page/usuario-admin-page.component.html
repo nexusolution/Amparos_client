@@ -1,0 +1,225 @@
+<!-- Modern User Form Page -->
+<div class="modern-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">{{ editMode ? 'Editar Usuario' : 'Nuevo Usuario' }}</h1>
+  </div>
+
+  <!-- Form Card -->
+  <div class="modern-card">
+    <div class="card-header-modern">
+      <h3 class="card-title-modern">Información del Usuario</h3>
+    </div>
+
+    <div class="card-body-modern">
+      <form autocomplete="off" [formGroup]="myForm" (ngSubmit)="onSave()" class="form-modern">
+
+        <!-- Órgano Jurisdiccional -->
+        <div class="form-row-modern" style="grid-template-columns: 1fr;">
+          <div class="form-group-modern">
+            <label class="form-label-modern">
+              Órgano Jurisdiccional <span class="form-required">*</span>
+            </label>
+            <select
+              formControlName="organoImpartidorJusticia"
+              class="form-select-modern"
+              [class.is-invalid]="formUtils.isValidField(myForm, 'organoImpartidorJusticia')">
+              <option value="">Seleccione una opción</option>
+              <option *ngFor="let juzgado of juzgados" [value]="juzgado.organoImpartidorJusticia">
+                {{ juzgado.nombre }} ({{ juzgado.clave }})
+              </option>
+            </select>
+            <span *ngIf="formUtils.isValidField(myForm, 'organoImpartidorJusticia')" class="form-error-text">
+              {{ formUtils.getFieldError(myForm, 'organoImpartidorJusticia') }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Nombre Completo -->
+        <div class="form-row-modern">
+          <div class="form-group-modern">
+            <label class="form-label-modern">
+              Nombre <span class="form-required">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="nombre"
+              class="form-input-modern"
+              placeholder="Ingrese el nombre"
+              [class.is-invalid]="formUtils.isValidField(myForm, 'nombre')"/>
+            <span *ngIf="formUtils.isValidField(myForm, 'nombre')" class="form-error-text">
+              {{ formUtils.getFieldError(myForm, 'nombre') }}
+            </span>
+          </div>
+
+          <div class="form-group-modern">
+            <label class="form-label-modern">
+              Apellido Paterno <span class="form-required">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="apPaterno"
+              class="form-input-modern"
+              placeholder="Ingrese el apellido paterno"
+              [class.is-invalid]="formUtils.isValidField(myForm, 'apPaterno')"/>
+            <span *ngIf="formUtils.isValidField(myForm, 'apPaterno')" class="form-error-text">
+              {{ formUtils.getFieldError(myForm, 'apPaterno') }}
+            </span>
+          </div>
+
+          <div class="form-group-modern">
+            <label class="form-label-modern">
+              Apellido Materno <span class="form-required">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="apMaterno"
+              class="form-input-modern"
+              placeholder="Ingrese el apellido materno"
+              [class.is-invalid]="formUtils.isValidField(myForm, 'apMaterno')"/>
+            <span *ngIf="formUtils.isValidField(myForm, 'apMaterno')" class="form-error-text">
+              {{ formUtils.getFieldError(myForm, 'apMaterno') }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Correo, Perfil y Estado -->
+        <div class="form-row-modern">
+          <div class="form-group-modern">
+            <label class="form-label-modern">
+              Correo Electrónico <span class="form-required">*</span>
+            </label>
+            <input
+              type="email"
+              formControlName="correo"
+              class="form-input-modern"
+              placeholder="usuario@ejemplo.com"
+              [class.is-invalid]="formUtils.isValidField(myForm, 'correo')"/>
+            <span *ngIf="formUtils.isValidField(myForm, 'correo')" class="form-error-text">
+              {{ formUtils.getFieldError(myForm, 'correo') }}
+            </span>
+          </div>
+
+          <div class="form-group-modern">
+            <label class="form-label-modern">
+              Perfil <span class="form-required">*</span>
+            </label>
+            <select
+              formControlName="role"
+              class="form-select-modern"
+              [class.is-invalid]="formUtils.isValidField(myForm, 'role')">
+              <option value="">Seleccione un perfil</option>
+              <option value="Administrador">Administrador</option>
+              <option value="Operador">Operador</option>
+            </select>
+            <span *ngIf="formUtils.isValidField(myForm, 'role')" class="form-error-text">
+              {{ formUtils.getFieldError(myForm, 'role') }}
+            </span>
+          </div>
+
+          <div class="form-group-modern">
+            <label class="form-label-modern">
+              Estado <span class="form-required">*</span>
+            </label>
+            <select
+              formControlName="estado"
+              class="form-select-modern"
+              [class.is-invalid]="formUtils.isValidField(myForm, 'estado')">
+              <option value="">Seleccione estado</option>
+              <option value="A">Activo</option>
+              <option value="I">Inactivo</option>
+            </select>
+            <span *ngIf="formUtils.isValidField(myForm, 'estado')" class="form-error-text">
+              {{ formUtils.getFieldError(myForm, 'estado') }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Teléfono y Extensión -->
+        <div class="form-row-modern">
+          <div class="form-group-modern">
+            <label class="form-label-modern">
+              Teléfono <span class="form-required">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="telefono"
+              class="form-input-modern"
+              placeholder="Ingrese el teléfono"
+              [class.is-invalid]="formUtils.isValidField(myForm, 'telefono')"/>
+            <span *ngIf="formUtils.isValidField(myForm, 'telefono')" class="form-error-text">
+              {{ formUtils.getFieldError(myForm, 'telefono') }}
+            </span>
+          </div>
+
+          <div class="form-group-modern">
+            <label class="form-label-modern">
+              Extensión <span class="form-required">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="extension"
+              class="form-input-modern"
+              placeholder="Ingrese la extensión"
+              autocomplete="off"/>
+          </div>
+        </div>
+
+        <!-- Usuario y Contraseña -->
+        <div class="form-row-modern">
+          <div class="form-group-modern">
+            <label class="form-label-modern">
+              Usuario <span class="form-required">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="usuario"
+              class="form-input-modern"
+              placeholder="Nombre de usuario"
+              autocomplete="off"/>
+          </div>
+
+          <div class="form-group-modern">
+            <label class="form-label-modern">
+              Contraseña
+              <span class="form-required" *ngIf="!editMode">*</span>
+              <span *ngIf="editMode" style="font-weight: 400; color: #6b7280;">(opcional)</span>
+            </label>
+            <input
+              type="password"
+              formControlName="clave"
+              class="form-input-modern"
+              [placeholder]="editMode ? 'Dejar vacío para mantener contraseña actual' : 'Contraseña'"
+              autocomplete="off"
+              [required]="!editMode"/>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-row-modern" style="grid-template-columns: 1fr; margin-top: 8px;">
+          <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <button
+              type="button"
+              class="btn-modern btn-secondary-modern"
+              (click)="onCancel()">
+              {{ editMode ? 'Cancelar' : 'Limpiar' }}
+            </button>
+            <button
+              type="submit"
+              class="btn-modern btn-primary-modern">
+              <svg class="btn-icon-modern" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              {{ editMode ? 'Actualizar' : 'Guardar' }}
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+</div>

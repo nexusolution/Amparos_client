@@ -1,0 +1,151 @@
+<div class="document-list-container">
+  <!-- Empty State -->
+  <div *ngIf="documents.length === 0" class="empty-state">
+    <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+    </svg>
+    <p class="empty-text">No hay documentos para mostrar</p>
+  </div>
+
+  <!-- Documents Grid -->
+  <div *ngIf="documents.length > 0" class="documents-grid">
+    <div class="document-card" *ngFor="let doc of documents; let i = index">
+      <!-- Document Icon -->
+      <div class="document-icon" [style.background-color]="getFileIcon(doc.extension)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+        <span class="file-extension">{{ doc.extension || 'FILE' }}</span>
+      </div>
+
+      <!-- Document Info -->
+      <div class="document-info">
+        <h4 class="document-name" [title]="doc.nombre || doc.nombreArchivo">
+          {{ doc.nombre || doc.nombreArchivo || 'Sin nombre' }}
+        </h4>
+        <div class="document-meta">
+          <span class="meta-item">
+            <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+              <polyline points="13 2 13 9 20 9"></polyline>
+            </svg>
+            {{ formatFileSize(doc.longitud) }}
+          </span>
+          <span class="meta-item" *ngIf="doc.fechaFirmado">
+            <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            {{ formatDate(doc.fechaFirmado) }}
+          </span>
+        </div>
+
+        <!-- Badges -->
+        <div class="document-badges">
+          <span class="badge badge-signed" *ngIf="doc.firmado">
+            <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Firmado
+          </span>
+          <span class="badge badge-classification" *ngIf="doc.clasificacionArchivo">
+            {{ doc.clasificacionArchivo.descripcion }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Document Actions -->
+      <div class="document-actions">
+        <button
+          type="button"
+          class="action-btn action-download"
+          (click)="onDownload(i)"
+          title="Descargar"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </button>
+        <button
+          *ngIf="!viewMode"
+          type="button"
+          class="action-btn action-delete"
+          (click)="onDelete(i)"
+          title="Eliminar"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alternative Table View (Commented out, can be used as alternative) -->
+  <!-- <div *ngIf="documents.length > 0" class="table-responsive">
+    <table class="documents-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Tipo</th>
+          <th>Tamaño</th>
+          <th>Clasificación</th>
+          <th>Estado</th>
+          <th class="actions-column">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let doc of documents; let i = index">
+          <td>
+            <div class="table-file-name">
+              <div class="table-file-icon" [style.background-color]="getFileIcon(doc.extension)">
+                <span>{{ doc.extension || '?' }}</span>
+              </div>
+              <span>{{ doc.nombre || doc.nombreArchivo || 'Sin nombre' }}</span>
+            </div>
+          </td>
+          <td>{{ doc.extension?.toUpperCase() || 'N/A' }}</td>
+          <td>{{ formatFileSize(doc.longitud) }}</td>
+          <td>{{ doc.clasificacionArchivo?.descripcion || 'N/A' }}</td>
+          <td>
+            <span class="badge badge-signed" *ngIf="doc.firmado">Firmado</span>
+            <span class="badge badge-unsigned" *ngIf="!doc.firmado">Sin Firmar</span>
+          </td>
+          <td class="actions-column">
+            <button
+              type="button"
+              class="btn-action btn-download"
+              (click)="onDownload(i)"
+              title="Descargar"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            </button>
+            <button
+              *ngIf="!viewMode"
+              type="button"
+              class="btn-action btn-delete"
+              (click)="onDelete(i)"
+              title="Eliminar"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div> -->
+</div>

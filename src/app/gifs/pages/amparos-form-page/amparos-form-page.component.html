@@ -1,0 +1,133 @@
+<!-- Modern Amparos Form Page -->
+<div class="modern-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">{{ isEditMode ? 'Editar Amparo' : 'Crear Amparo' }}</h1>
+  </div>
+
+  <!-- Form Card -->
+  <div class="modern-card">
+    <div class="card-body-modern">
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center" style="padding: 40px 0;">
+        <div class="loading-spinner" style="margin: 0 auto 16px;"></div>
+        <p class="text-muted">Cargando amparo...</p>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="amparosForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+        <div class="form-grid">
+
+          <!-- ID Expediente -->
+          <div class="form-group">
+            <label class="form-label" for="idExpediente">
+              ID Expediente <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="idExpediente"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('idExpediente')"
+              formControlName="idExpediente"
+              placeholder="Ingrese el ID del expediente">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('idExpediente')">
+              {{ getErrorMessage('idExpediente') }}
+            </div>
+          </div>
+
+          <!-- ID Notificación -->
+          <div class="form-group">
+            <label class="form-label" for="idNotificacion">
+              ID Notificación <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="idNotificacion"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('idNotificacion')"
+              formControlName="idNotificacion"
+              placeholder="Ingrese el ID de la notificación">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('idNotificacion')">
+              {{ getErrorMessage('idNotificacion') }}
+            </div>
+          </div>
+
+          <!-- Número Expediente DJ -->
+          <div class="form-group">
+            <label class="form-label" for="numeroExpedienteDJ">
+              Número Expediente DJ <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="numeroExpedienteDJ"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('numeroExpedienteDJ')"
+              formControlName="numeroExpedienteDJ"
+              placeholder="Ingrese el número de expediente DJ">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('numeroExpedienteDJ')">
+              {{ getErrorMessage('numeroExpedienteDJ') }}
+            </div>
+          </div>
+
+          <!-- Juzgado -->
+          <div class="form-group">
+            <label class="form-label" for="JUZGADO">
+              Juzgado <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="JUZGADO"
+              class="form-control-modern"
+              [class.is-invalid]="isFieldInvalid('JUZGADO')"
+              formControlName="JUZGADO"
+              placeholder="Ingrese el juzgado">
+            <div class="invalid-feedback" *ngIf="isFieldInvalid('JUZGADO')">
+              {{ getErrorMessage('JUZGADO') }}
+            </div>
+          </div>
+
+          <!-- Expediente Electronico -->
+          <div class="form-group">
+            <div class="form-check-modern">
+              <input
+                type="checkbox"
+                id="expedienteElectronico"
+                class="form-check-input-modern"
+                formControlName="expedienteElectronico">
+              <label class="form-check-label-modern" for="expedienteElectronico">
+                Expediente Electrónico
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn-modern btn-secondary-modern"
+            (click)="onCancel()"
+            [disabled]="submitting">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn-modern btn-primary-modern"
+            [disabled]="submitting">
+            <span *ngIf="!submitting">{{ isEditMode ? 'Actualizar' : 'Guardar' }}</span>
+            <span *ngIf="submitting">
+              <div class="btn-spinner"></div>
+              Guardando...
+            </span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>
