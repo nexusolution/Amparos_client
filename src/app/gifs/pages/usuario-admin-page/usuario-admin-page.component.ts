@@ -36,7 +36,7 @@ export class UsuarioAdminPageComponent implements OnInit, OnDestroy {
     estado: ['A', [Validators.required]],
     role: ['', [Validators.required]],
     idPerfil: [1, [Validators.required, Validators.min(1)]],
-    organoImpartidorJusticia: ['', [Validators.required, Validators.min(1)]],
+    organoImpartidorJusticia: [null, [Validators.required]],
     eliminado: [false],
   });
 
@@ -139,17 +139,23 @@ export class UsuarioAdminPageComponent implements OnInit, OnDestroy {
   }
 
   private createUser(): void {
-    const userData: CreateUserRequest = this.myForm.value;
+    const formData = this.myForm.value;
     const selectedRole = this.myForm.get('role')?.value;
 
     // Ensure clave is provided for new users
-    if (!userData.clave) {
+    if (!formData.clave) {
       this.toastr.warning(
         'La contraseña es requerida para crear un nuevo usuario',
         'Campo Requerido'
       );
       return;
     }
+
+    // Ensure organoImpartidorJusticia is a number
+    const userData: CreateUserRequest = {
+      ...formData,
+      organoImpartidorJusticia: Number(formData.organoImpartidorJusticia)
+    };
 
     this.userService.createUser(userData, selectedRole).subscribe({
       next: (response) => {
@@ -173,8 +179,11 @@ export class UsuarioAdminPageComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error en la petición:', error);
+        console.error('Error details:', JSON.stringify(error?.error, null, 2));
+        console.error('Error object full:', error);
+        const errorMessage = error?.error?.error || error?.error?.message || 'Error al crear usuario. Verifique los datos e intente nuevamente.';
         this.toastr.error(
-          'Error al crear usuario. Verifique los datos e intente nuevamente.',
+          errorMessage,
           'Error de Operación'
         );
       }
@@ -197,6 +206,7 @@ export class UsuarioAdminPageComponent implements OnInit, OnDestroy {
     // Remove clave if it's empty (user doesn't want to change password)
     const userData: CreateUserRequest = {
       ...formData,
+      organoImpartidorJusticia: Number(formData.organoImpartidorJusticia),
       clave: formData.clave && formData.clave.trim() !== '' ? formData.clave : undefined,
       role: undefined
     };
@@ -226,8 +236,9 @@ export class UsuarioAdminPageComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error en la petición de actualización:', error);
+        const errorMessage = error?.error?.error || error?.error?.message || 'Error al actualizar usuario. Verifique los datos e intente nuevamente.';
         this.toastr.error(
-          'Error al actualizar usuario. Verifique los datos e intente nuevamente.',
+          errorMessage,
           'Error de Operación'
         );
       }
@@ -246,8 +257,8 @@ export class UsuarioAdminPageComponent implements OnInit, OnDestroy {
       extension: '',
       estado: 'A',
       role: '',
-      idPerfil: '',
-      organoImpartidorJusticia: '',
+      idPerfil: 1,
+      organoImpartidorJusticia: null,
       eliminado: false,
     });
   }
